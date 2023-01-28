@@ -43,7 +43,7 @@
                                     <a href="tel:+012 345 67890"><i class="fa fa-phone-alt"></i>+012 345 67890</a>
                                 </div>
                                 <div class="topbar-col">
-                                    <a href="mailto:info@example.com"><i class="fa fa-envelope"></i>info@example.com</a>
+                                    <a href="mailto:info@example.com"><i class="fa fa-envelope"></i>peggy@allinonecleaningglow.com</a>
                                 </div>
                                 <div class="topbar-col">
                                     <div class="topbar-social">
@@ -93,19 +93,21 @@
                         <div class="col-md-5">
                             <div class="form">
                                 <h3>Get A Quote</h3>
-                                <form>
-                                    <input class="form-control" type="text" placeholder="Your Name">
-                                    <input class="form-control" type="text" placeholder="Mobile Number">
+                                <form id="my-form" action="https://formspree.io/f/xqkoeqbq" method="POST">
+                                    <input class="form-control" type="text" name="name" placeholder="Your Name">
+                                    <input class="form-control" type="text" name="phone" placeholder="Mobile Number">
+                                    <input class="form-control" type="text" name="email" placeholder="Email">
                                     <div class="control-group">
-                                        <select class="custom-select">
+                                        <select name="service" class="custom-select">
                                             <option selected>Choose a service</option>
                                             <option value="1">House Cleaning</option>
                                             <option value="2">Apartment Cleaning</option>
                                             <option value="3">Office Cleaning</option>
                                         </select>
                                     </div>
-                                    <textarea class="form-control" placeholder="Comment"></textarea>
+                                    <textarea name="comment" class="form-control" placeholder="Comment"></textarea>
                                     <button class="btn btn-block">Get A Quote</button>
+                                    <p id="my-form-status"></p>
                                 </form>
                             </div>
                         </div>
@@ -734,5 +736,37 @@
 
         <!-- Template Javascript -->
         <script src="js/main.js"></script>
+        <script>
+          var form = document.getElementById("my-form");
+
+          async function handleSubmit(event) {
+            event.preventDefault();
+            var status = document.getElementById("my-form-status");
+            var data = new FormData(event.target);
+            fetch(event.target.action, {
+              method: form.method,
+              body: data,
+              headers: {
+                  'Accept': 'application/json'
+              }
+            }).then(response => {
+              if (response.ok) {
+                status.innerHTML = "Thanks for your submission!";
+                form.reset()
+              } else {
+                response.json().then(data => {
+                  if (Object.hasOwn(data, 'errors')) {
+                    status.innerHTML = data["errors"].map(error => error["message"]).join(", ")
+                  } else {
+                    status.innerHTML = "Oops! There was a problem submitting your form"
+                  }
+                })
+              }
+            }).catch(error => {
+              status.innerHTML = "Oops! There was a problem submitting your form"
+            });
+          }
+          form.addEventListener("submit", handleSubmit)
+</script>
     </body>
 </html>
